@@ -228,47 +228,44 @@ async function testIPs(ipList) {
 
     const multiply = maxLatency <= 500 ? 1.5 : (maxLatency <= 1000 ? 1.2 : 1);
     let timeout = 1.5 * multiply * maxLatency;
-    let chNo = 0;
     let totalResponseTime = 0;
     let respondedCount = 0;
+    const ipStartTime = performance.now();
+
+    document.getElementById('ip-latency').innerText = '';
+
+    let chNo = 0;
     for (const ch of ['', '|', '/', '-', '\\']) {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => {
-        controller.abort();
-      }, timeout);
-      if (ch) {
-        timeout = 1 * multiply * maxLatency;
-        document.getElementById('ip-no').style = `color: green`;
-        document.getElementById('ip-try').innerText = ch;
-      } else {
-        timeout = 1.2 * multiply * maxLatency;
-        document.getElementById('ip-no').style = `color: red`;
-        document.getElementById('ip-try').innerText = '';
-        document.getElementById('ip-latency').innerText = '';
-      }
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      timeout = ch ? 1 * multiply * maxLatency : 1.2 * multiply * maxLatency;
+
       document.getElementById('test-no').innerText = `#${testNo}:`;
       document.getElementById('ip-no').innerText = ip;
+      document.getElementById('ip-no').style.color = ch ? 'green' : 'red';
+      document.getElementById('ip-try').innerText = ch;
+
       const attemptStart = performance.now();
       try {
-        const response = await fetch(url, {
-          signal: controller.signal,
-          mode: 'no-cors',
-        });
-        console.log(`${ip}   ${ch}   OK`)
+        await fetch(url, { signal: controller.signal, mode: 'no-cors' });
+        console.log(`${ip}   ${ch}   OK`);
         testResult++;
         totalResponseTime += performance.now() - attemptStart;
         respondedCount++;
       } catch (error) {
-        console.log(`${ip}   ${ch}   Fail`, error.name)
-        if (error.name !== "AbortError") {
+        console.log(`${ip}   ${ch}   Fail`, error.name);
+        if (error.name !== 'AbortError') {
           testResult++;
           totalResponseTime += performance.now() - attemptStart;
           respondedCount++;
         }
       }
-      if (respondedCount > 0) {
-        document.getElementById('ip-latency').innerText = Math.floor(totalResponseTime / respondedCount) + 'ms';
-      }
+
+      const displayLatency = respondedCount > 0
+        ? Math.floor(totalResponseTime / respondedCount)
+        : Math.floor((performance.now() - ipStartTime) / (chNo + 1));
+      document.getElementById('ip-latency').innerText = displayLatency + 'ms';
+
       clearTimeout(timeoutId);
       chNo++;
     }
