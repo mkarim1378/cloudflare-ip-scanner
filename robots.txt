@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mkarim1378.github.io/cloudflare-ip-scanner/sitemap.xml

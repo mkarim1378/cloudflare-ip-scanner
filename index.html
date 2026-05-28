@@ -3,7 +3,31 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta charset="utf-8">
-  <title>Cloudflare Clean IP Scanner</title>
+  <title>اسکنر آی‌پی تمیز کلادفلر | Cloudflare Clean IP Scanner</title>
+  <meta name="description" content="ابزار رایگان برای پیدا کردن آی‌پی تمیز کلادفلر با کمترین تاخیر. مناسب برای پیکربندی پروکسی، Xray و V2Ray. Free tool to find clean Cloudflare IPs with low latency.">
+  <meta name="keywords" content="آی‌پی تمیز کلادفلر, آی پی تمیز, cloudflare clean ip, ip scanner, cloudflare ip finder, xray cloudflare, v2ray cloudflare">
+  <link rel="canonical" href="https://mkarim1378.github.io/cloudflare-ip-scanner/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mkarim1378.github.io/cloudflare-ip-scanner/">
+  <meta property="og:title" content="اسکنر آی‌پی تمیز کلادفلر | Cloudflare Clean IP Scanner">
+  <meta property="og:description" content="ابزار رایگان برای پیدا کردن آی‌پی تمیز کلادفلر با کمترین تاخیر. مناسب برای پیکربندی پروکسی، Xray و V2Ray.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="اسکنر آی‌پی تمیز کلادفلر">
+  <meta name="twitter:description" content="ابزار رایگان برای پیدا کردن آی‌پی تمیز کلادفلر با کمترین تاخیر.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "اسکنر آی‌پی تمیز کلادفلر",
+    "alternateName": "Cloudflare Clean IP Scanner",
+    "url": "https://mkarim1378.github.io/cloudflare-ip-scanner/",
+    "description": "ابزار رایگان برای پیدا کردن آی‌پی تمیز کلادفلر با کمترین تاخیر",
+    "applicationCategory": "NetworkingApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "inLanguage": ["fa", "en", "zh"]
+  }
+  </script>
   <link href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <style type="text/css">
@@ -18,9 +42,11 @@
   <div class="container border rounded-2 mt-2 border-dark">
     <div class="row">
       <div class="col-12 p-2 text-center border-bottom border-dark text-primary">
-        <span class="lang-field lang-fa fw-bold">پیدا کردن آی‌پی تمیز کلادفلر</span>
-        <span class="lang-field lang-en fw-bold">Cloudflare's Clean IP Scanner</span>
-        <span class="lang-field lang-cn fw-bold">Cloudflare IP 扫描器</span>
+        <h1 class="d-inline fs-6 fw-bold">
+          <span class="lang-field lang-fa">پیدا کردن آی‌پی تمیز کلادفلر</span>
+          <span class="lang-field lang-en">Cloudflare's Clean IP Scanner</span>
+          <span class="lang-field lang-cn">Cloudflare IP 扫描器</span>
+        </h1>
         <div class="btn-group float-end" role="group" dir="ltr">
           <button id="btn-fa" class="btn btn-lang btn-outline-primary btn-sm rounded-2" type="button">FA</button>&nbsp;
           <button id="btn-en" class="btn btn-lang btn-outline-primary btn-sm rounded-2" type="button">EN</button>&nbsp;
@@ -179,9 +205,9 @@
           </th>
           <th width="70">
             <div class="btn-group" role="group" dir="ltr">
-              <button class="btn btn-outline-secondary btn-sm" onclick="downloadAsCSV()"><img height="20px" src="assets/icon-csv.png" /></button>
-              <button class="btn btn-outline-secondary btn-sm" onclick="downloadAsJSON()"><img height="20px" src="assets/icon-json.png" /></button>
-              <button class="btn btn-outline-secondary btn-sm" onclick="copyAllToClipboard()"><img height="20px" src="assets/icon-copy.png" /></button>
+              <button class="btn btn-outline-secondary btn-sm" onclick="downloadAsCSV()"><img height="20px" src="assets/icon-csv.png" alt="دانلود CSV" /></button>
+              <button class="btn btn-outline-secondary btn-sm" onclick="downloadAsJSON()"><img height="20px" src="assets/icon-json.png" alt="دانلود JSON" /></button>
+              <button class="btn btn-outline-secondary btn-sm" onclick="copyAllToClipboard()"><img height="20px" src="assets/icon-copy.png" alt="کپی همه" /></button>
             </div>
           </th>
         </tr>
