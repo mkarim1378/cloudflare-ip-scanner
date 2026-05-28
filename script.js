@@ -4,6 +4,11 @@ const noOfEachRange24 = 30
 const client = new XMLHttpRequest();
 client.open('GET', 'https://raw.githubusercontent.com/vfarid/cf-ip-scanner/main/ipv4.txt');
 client.onreadystatechange = function() {
+  if (client.readyState !== 4) return;
+  if (client.status !== 200) {
+    document.getElementById('btn-start').title = 'خطا در دریافت لیست آی‌پی‌ها';
+    return;
+  }
   cfIPv4 = client.responseText.split("\n").map((cidr) => cidr.trim()).filter((cidr) => isCIDR(cidr));
   document.getElementById('btn-start').disabled = false;
   const tbody = document.getElementById('ip-ranges-body');
@@ -22,8 +27,6 @@ let maxLatency;
 let numberOfWorkingIPs;
 let ipRegex;
 let immediateStop = false;
-let progressBar = document.getElementById('progress-bar');
-let progress = 0;
 let portNo = 443;
 let protocol = "https";
 let language = localStorage.getItem('lang') || 'fa'
@@ -133,14 +136,12 @@ function cancelScan() {
   document.getElementById('btn-reset').classList.remove('d-none');
 }
 
-let ips = [];
-
 function startScan() {
   maxIP = ~~document.getElementById('max-ip').value;
   maxLatency = ~~document.getElementById('max-latency').value;
   ipRegex = document.getElementById('ip-regex').value;
-  ipInclude = document.getElementById('ip-include').value;
-  ipExclude = document.getElementById('ip-exclude').value;
+  let ipInclude = document.getElementById('ip-include').value;
+  let ipExclude = document.getElementById('ip-exclude').value;
   portNo = document.getElementById('port-no').value;
   protocol = document.getElementById('protocol').value;
 
@@ -216,11 +217,11 @@ async function testIPs(ipList) {
     let url = `${protocol}://${ip}:${portNo}/cdn-cgi/trace`;
 
     const startTime = performance.now();
-    const controller = new AbortController();
     const multiply = maxLatency <= 500 ? 1.5 : (maxLatency <= 1000 ? 1.2 : 1);
     let timeout = 1.5 * multiply * maxLatency;
     let chNo = 0;
     for (const ch of ['', '|', '/', '-', '\\']) {
+      const controller = new AbortController();
       const timeoutId = setTimeout(() => {
         controller.abort();
       }, timeout);
@@ -259,18 +260,10 @@ async function testIPs(ipList) {
     console.log(testResult, latency, maxLatency)
     if (testResult >= 3 && latency <= maxLatency) {
       numberOfWorkingIPs++;
-      validIPs.push({ip: ip, latency: latency});
-      const sortedArr = validIPs.sort((a, b) => a.latency - b.latency);
-      const tableRows = sortedArr.map(obj => `
-        <tr>
-          <td></td>
-          <td>${obj.ip}</td>
-          <td>${obj.latency}ms</td>
-          <td>
-          <button class="btn btn-outline-secondary btn-sm" onclick="copyToClipboard('${obj.ip}')"><img height="16px" src="assets/icon-copy.png" /></button>
-          </td>
-        </tr>`).join('\n');
-      document.getElementById('result').innerHTML = tableRows;
+      const validIP = {ip: ip, latency: latency};
+      validIPs.push(validIP);
+      validIPs.sort((a, b) => a.latency - b.latency);
+      insertResultRow(validIP);
     }
 
     if (numberOfWorkingIPs >= maxIP) {
@@ -302,7 +295,7 @@ async function testIPs(ipList) {
     `;
   } else {
     if (window.self !== window.top) {
-      window.top.postMessage({cleanIPs: validIPs.map(el => el.ip).join('\n')}, '*');
+      window.top.postMessage({cleanIPs: validIPs.map(el => el.ip).join('\n')}, window.location.origin);
     }
 
     document.getElementById('test-no').innerHTML = `
@@ -314,6 +307,34 @@ async function testIPs(ipList) {
   setLang(language)
 }
 
+function insertResultRow(validIP) {
+  const tbody = document.getElementById('result');
+  const insertIndex = validIPs.indexOf(validIP);
+
+  const row = tbody.insertRow(insertIndex);
+
+  const numCell = row.insertCell(0);
+  const ipCell = row.insertCell(1);
+  const latencyCell = row.insertCell(2);
+  const actionCell = row.insertCell(3);
+
+  ipCell.textContent = validIP.ip;
+  latencyCell.textContent = validIP.latency + 'ms';
+
+  const btn = document.createElement('button');
+  btn.className = 'btn btn-outline-secondary btn-sm';
+  btn.onclick = () => copyToClipboard(validIP.ip);
+  const img = document.createElement('img');
+  img.height = 16;
+  img.src = 'assets/icon-copy.png';
+  btn.appendChild(img);
+  actionCell.appendChild(btn);
+
+  Array.from(tbody.rows).forEach((r, i) => {
+    r.cells[0].textContent = i + 1;
+  });
+}
+
 function copyToClipboard(ip) {
   window.navigator.clipboard.writeText(ip).then(() => {
     alert('آی‌پی‌ در کلیپ‌بورد کپی شد.');
@@ -322,7 +343,7 @@ function copyToClipboard(ip) {
   });
 }
 
-function copyAllToClipboard(ip) {
+function copyAllToClipboard() {
   const txt = validIPs.map(el => el.ip).join('\n');
   copyToClipboard(txt)
 }
@@ -333,7 +354,7 @@ function isCIDR(cidr) {
 
 function makeCIDR(includeStr) {
   let includeList = includeStr.split(',').map((cidr) => cidr.trim());
-  cidrList = includeList.flatMap((cidr) => {
+  const cidrList = includeList.flatMap((cidr) => {
     if (isCIDR(cidr)) {
       return [cidr];
     } else if (cidr) {
