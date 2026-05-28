@@ -26,6 +26,8 @@ let validIPs;
 let maxLatency;
 let numberOfWorkingIPs;
 let ipRegex;
+let ipInclude;
+let ipExclude;
 let immediateStop = false;
 let portNo = 443;
 let protocol = "https";
@@ -140,8 +142,8 @@ function startScan() {
   maxIP = ~~document.getElementById('max-ip').value;
   maxLatency = ~~document.getElementById('max-latency').value;
   ipRegex = document.getElementById('ip-regex').value;
-  let ipInclude = document.getElementById('ip-include').value;
-  let ipExclude = document.getElementById('ip-exclude').value;
+  ipInclude = document.getElementById('ip-include').value;
+  ipExclude = document.getElementById('ip-exclude').value;
   portNo = document.getElementById('port-no').value;
   protocol = document.getElementById('protocol').value;
 
