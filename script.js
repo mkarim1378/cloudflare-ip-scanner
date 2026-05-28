@@ -39,6 +39,14 @@ document.getElementById('ip-regex').value = localStorage.getItem('ip-regex');
 document.getElementById('ip-include').value = localStorage.getItem('ip-include');
 document.getElementById('ip-exclude').value = localStorage.getItem('ip-exclude');
 document.getElementById('protocol').value = localStorage.getItem('protocol') || "https";
+if (window.location.protocol === 'https:') {
+  const httpOption = document.getElementById('protocol').querySelector('option[value="http"]');
+  if (httpOption) httpOption.disabled = true;
+  if (document.getElementById('protocol').value === 'http') {
+    document.getElementById('protocol').value = 'https';
+    localStorage.setItem('protocol', 'https');
+  }
+}
 setLang(language);
 setProtocol();
 
@@ -251,7 +259,7 @@ async function testIPs(ipList) {
         testResult++;
       } catch (error) {
         console.log(`${ip}   ${ch}   Fail`, error.name)
-        if (!["AbortError", "TypeError"].includes(error.name)) {
+        if (error.name !== "AbortError") {
           testResult++;
         }
       }
