@@ -238,19 +238,16 @@ async function testIPs(ipList) {
       }, timeout);
       if (ch) {
         timeout = 1 * multiply * maxLatency;
-        document.getElementById('test-no').innerText = `#${testNo}:`;
-        document.getElementById('ip-no').innerText = ip;
         document.getElementById('ip-no').style = `color: green`;
         document.getElementById('ip-try').innerText = ch;
-        document.getElementById('ip-latency').innerText = (respondedCount > 0 ? Math.floor(totalResponseTime / respondedCount) : '...') + 'ms';
       } else {
         timeout = 1.2 * multiply * maxLatency;
-        document.getElementById('test-no').innerText = `#${testNo}:`;
-        document.getElementById('ip-no').innerText = ip;
         document.getElementById('ip-no').style = `color: red`;
         document.getElementById('ip-try').innerText = '';
         document.getElementById('ip-latency').innerText = '';
       }
+      document.getElementById('test-no').innerText = `#${testNo}:`;
+      document.getElementById('ip-no').innerText = ip;
       const attemptStart = performance.now();
       try {
         const response = await fetch(url, {
@@ -268,6 +265,9 @@ async function testIPs(ipList) {
           totalResponseTime += performance.now() - attemptStart;
           respondedCount++;
         }
+      }
+      if (respondedCount > 0) {
+        document.getElementById('ip-latency').innerText = Math.floor(totalResponseTime / respondedCount) + 'ms';
       }
       clearTimeout(timeoutId);
       chNo++;
