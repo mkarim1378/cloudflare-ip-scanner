@@ -2,7 +2,7 @@ let cfIPv4 = []
 let cfIPv4ToScan = []
 const noOfEachRange24 = 30
 const client = new XMLHttpRequest();
-client.open('GET', 'https://raw.githubusercontent.com/vfarid/cf-ip-scanner/main/ipv4.txt');
+client.open('GET', 'ipv4.txt');
 client.onreadystatechange = function() {
   if (client.readyState !== 4) return;
   if (client.status !== 200) {
