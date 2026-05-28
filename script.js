@@ -243,6 +243,7 @@ async function testIPs(ipList) {
       try {
         const response = await fetch(url, {
           signal: controller.signal,
+          mode: 'no-cors',
         });
         console.log(`${ip}   ${ch}   OK`)
         testResult++;
