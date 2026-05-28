@@ -261,10 +261,9 @@ async function testIPs(ipList) {
         }
       }
 
-      const displayLatency = respondedCount > 0
-        ? Math.floor(totalResponseTime / respondedCount)
-        : Math.floor((performance.now() - ipStartTime) / (chNo + 1));
-      document.getElementById('ip-latency').innerText = displayLatency + 'ms';
+      document.getElementById('ip-latency').innerText = respondedCount > 0
+        ? Math.floor(totalResponseTime / respondedCount) + 'ms'
+        : '--';
 
       clearTimeout(timeoutId);
       chNo++;
