@@ -226,10 +226,11 @@ async function testIPs(ipList) {
     let testResult = 0;
     let url = `${protocol}://${ip}:${portNo}/cdn-cgi/trace`;
 
-    const startTime = performance.now();
     const multiply = maxLatency <= 500 ? 1.5 : (maxLatency <= 1000 ? 1.2 : 1);
     let timeout = 1.5 * multiply * maxLatency;
     let chNo = 0;
+    let totalResponseTime = 0;
+    let respondedCount = 0;
     for (const ch of ['', '|', '/', '-', '\\']) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
@@ -241,7 +242,7 @@ async function testIPs(ipList) {
         document.getElementById('ip-no').innerText = ip;
         document.getElementById('ip-no').style = `color: green`;
         document.getElementById('ip-try').innerText = ch;
-        document.getElementById('ip-latency').innerText = Math.floor((performance.now() - startTime) / chNo) + 'ms';
+        document.getElementById('ip-latency').innerText = (respondedCount > 0 ? Math.floor(totalResponseTime / respondedCount) : '...') + 'ms';
       } else {
         timeout = 1.2 * multiply * maxLatency;
         document.getElementById('test-no').innerText = `#${testNo}:`;
@@ -250,6 +251,7 @@ async function testIPs(ipList) {
         document.getElementById('ip-try').innerText = '';
         document.getElementById('ip-latency').innerText = '';
       }
+      const attemptStart = performance.now();
       try {
         const response = await fetch(url, {
           signal: controller.signal,
@@ -257,17 +259,21 @@ async function testIPs(ipList) {
         });
         console.log(`${ip}   ${ch}   OK`)
         testResult++;
+        totalResponseTime += performance.now() - attemptStart;
+        respondedCount++;
       } catch (error) {
         console.log(`${ip}   ${ch}   Fail`, error.name)
         if (error.name !== "AbortError") {
           testResult++;
+          totalResponseTime += performance.now() - attemptStart;
+          respondedCount++;
         }
       }
       clearTimeout(timeoutId);
       chNo++;
     }
 
-    const latency = Math.floor((performance.now() - startTime) / 5);
+    const latency = respondedCount > 0 ? Math.floor(totalResponseTime / respondedCount) : Infinity;
     console.log(testResult, latency, maxLatency)
     if (testResult >= 3 && latency <= maxLatency) {
       numberOfWorkingIPs++;
